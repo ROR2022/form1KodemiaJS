@@ -33,7 +33,7 @@ inputGender.forEach((el) => {
 const inputCountry = document.querySelector("#inputCountry");
 inputCountry.addEventListener("change", (event) => {
   const country = event.target.value;
-  objData.country = country;
+  objData.country = country!=='Country:'?country:'';
 });
 const inputLanguage = document.querySelectorAll("#language");
 inputLanguage.forEach(item=>{
