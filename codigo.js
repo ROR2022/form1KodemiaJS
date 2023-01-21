@@ -1,12 +1,16 @@
-const objData = {
+import { postDataInDB } from "./apiCRUD.js";
+
+let objData = {
   firstName: "",
   lastName: "",
   birthDate: "",
   gender: "",
-  country:"",
-  languages:"",
-  description:""
+  country: "",
+  languages: "",
+  description: "",
 };
+
+const personas = [];
 
 const inputFirstName = document.querySelector("#inputFirstName");
 inputFirstName.addEventListener("change", (event) => {
@@ -27,51 +31,69 @@ const inputGender = document.querySelectorAll("input[name='inputGender']");
 inputGender.forEach((el) => {
   el.addEventListener("change", (event) => {
     const gender = event.target.value;
-    objData.gender= gender;
+    objData.gender = gender;
   });
 });
 const inputCountry = document.querySelector("#inputCountry");
 inputCountry.addEventListener("change", (event) => {
   const country = event.target.value;
-  objData.country = country!=='Country:'?country:'';
+  objData.country = country !== "Country:" ? country : "";
 });
 const inputLanguage = document.querySelectorAll("#language");
-inputLanguage.forEach(item=>{
+inputLanguage.forEach((item) => {
   item.addEventListener("change", (event) => {
     const language = event.target.value;
     const add = event.target.checked;
-    let tempArray=objData.languages.split(' ').filter(item=>item!=='');
-    if(add){
+    let tempArray = objData.languages.split(" ").filter((item) => item !== "");
+    if (add) {
       tempArray.push(language);
-      objData.languages=tempArray.join(' ');
-    } else{
-      let newArray= tempArray.filter(el=>el!==language);
-      objData.languages= newArray.join(' ');
+      objData.languages = tempArray.join(" ");
+    } else {
+      let newArray = tempArray.filter((el) => el !== language);
+      objData.languages = newArray.join(" ");
     }
   });
-})
+});
 const inputDescription = document.querySelector("#inputDescription");
 inputDescription.addEventListener("change", (event) => {
   const description = event.target.value;
   objData.description = description;
 });
 
-
-const error= document.querySelector('#error');
+const error = document.querySelector("#error");
 const myForm = document.querySelector("#myForm");
-myForm.addEventListener("submit", (e) => {
+myForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   console.log(objData);
-  for(const data in objData){
-    if(objData[data]===''){
-      error.textContent='Favor de LLenar correctamente todos los campos:..';
-    }else{
-      error.textContent='';
+  for (const data in objData) {
+    if (objData[data] === "") {
+      error.textContent = "Favor de LLenar correctamente todos los campos:..";
+    } else {
+      error.textContent = "";
     }
+  }
+  if (!error.textContent) {
+    const response = await postDataInDB(objData);
+    console.log(response);
+    limpiarForm();
   }
 });
 
-
-
-
-
+const limpiarForm = () => {
+  objData = {
+    firstName: "",
+    lastName: "",
+    birthDate: "",
+    gender: "",
+    country: "",
+    languages: "",
+    description: "",
+  };
+  inputFirstName.value = "";
+  inputLastName.value = "";
+  inputBirthDate.value = "";
+  inputGender.forEach((el) => (el.checked = false));
+  inputCountry.value = "";
+  inputLanguage.forEach((el) => (el.checked = false));
+  inputDescription.value = "";
+};
